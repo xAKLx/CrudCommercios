@@ -13,12 +13,25 @@
     
 <body>
     <div class="container comerciosContainer">
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-bordered" id="comerciosTable">
+            <thead><tr><th>Nombre</th><th>Codigo</th><th>Descripcion</th><th>Ubicacion</th></tr></thead>
+            <tbody id="comerciosTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+             <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+            Create comercio
+          </button>
+        </div>
+      </div>
     </div>
     
-    <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Launch demo modal
-</button>
+ 
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -41,5 +54,31 @@
 </body>
 
 <script>
+function updateCommerciosTable(){
+  var table = document.getElementById("comerciosTableBody");
+
+  for(codigo in comercios){
+    comercio = comercios[codigo];
+    var nombre = document.createElement("td");
+    nombre.innerHTML = comercio["nombre"];
+    var codigo = document.createElement("td");
+    codigo.innerHTML = comercio["codigo"];
+    var descripcion = document.createElement("td");
+    descripcion.innerHTML = comercio["descripcion"];
+    var ubicacion = document.createElement("td");
+    ubicacion.innerHTML = "lat: " + comercio["ubicacion"]["lat"] + ", lng: " + comercio["ubicacion"]["lng"];
+
+    var row = document.createElement("tr");
+
+    row.appendChild(nombre);
+    row.appendChild(codigo);
+    row.appendChild(descripcion);
+    row.appendChild(ubicacion);
+
+    table.appendChild(row);
+  }
+
+}
+
 </script>
 </html>
