@@ -44,7 +44,7 @@
       <div class="modal-body">
         <div class="container">
             <div class="row">
-                <div id="map" class="" style="width: 300px; height: 300px"></div>
+                <div id="map" class="" style="width: 500px; height: 300px"></div>
             </div>
         </div>
       </div>
@@ -58,7 +58,6 @@
 </body>
 
 <script>
-
 function initMap() {
   // Create a map object and specify the DOM element for display.
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -78,7 +77,7 @@ function resizingMap() {
    if(typeof map =="undefined") return;
    var center = map.getCenter;
    google.maps.event.trigger(map, "resize");
-   map.setCenter(center); 
+   map.setCenter = center; 
 }
 
 $('#myModal').on('show.bs.modal', function() {
