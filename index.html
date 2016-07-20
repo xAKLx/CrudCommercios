@@ -61,7 +61,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="saveComercio">Save changes</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveComercio()">Save changes</button>
       </div>
     </div>
   </div>
@@ -80,6 +80,8 @@ function initMap() {
   google.maps.event.addListener(map, "click", function(evt) {
       // When the map is clicked, pass the LatLng obect to the measureAdd function
       document.getElementById("latLng").innerHTML = "Ubicacion: lat: " + evt.latLng.lat() + " lng: " + evt.latLng.lng();
+      tempLat = evt.latLng.lat();
+      tempLng = evt.latLng.lng();
   });
 }
 
