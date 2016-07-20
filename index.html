@@ -34,7 +34,7 @@
  
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -42,7 +42,11 @@
         <h4 class="modal-title" id="myModalLabel">Modal title</h4>
       </div>
       <div class="modal-body">
-        ...
+        <div class="container">
+            <div class="row">
+                <div id="map" class="" style="width: 300px; height: 300px"></div>
+            </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -54,6 +58,34 @@
 </body>
 
 <script>
+
+function initMap() {
+  // Create a map object and specify the DOM element for display.
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: -34.397, lng: 150.644},
+    scrollwheel: false,
+    zoom: 8
+  });
+}
+
+
+function resizeMap() {
+   if(typeof map =="undefined") return;
+   setTimeout( resizingMap , 400);
+}
+
+function resizingMap() {
+   if(typeof map =="undefined") return;
+   var center = map.getCenter;
+   google.maps.event.trigger(map, "resize");
+   map.setCenter(center); 
+}
+
+$('#myModal').on('show.bs.modal', function() {
+   //Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
+   resizeMap();
+})
+
 function updateCommerciosTable(){
   var table = document.getElementById("comerciosTableBody");
 
