@@ -6,7 +6,26 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVNE9sptlriRty1HEF6kLBYLGvCVV7zcE&callback=initMap&libraries=geometry" async defer></script>
+    <script>
+        function initMap() {
+          // Create a map object and specify the DOM element for display.
+          var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -34.397, lng: 150.644},
+            scrollwheel: false,
+            zoom: 8
+          });
+
+          google.maps.event.addListener(map, "click", function(evt) {
+              // When the map is clicked, pass the LatLng obect to the measureAdd function
+              document.getElementById("latLng").innerHTML = "Ubicacion: lat: " + evt.latLng.lat() + " lng: " + evt.latLng.lng();
+              tempLat = evt.latLng.lat();
+              tempLng = evt.latLng.lng();
+          });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVNE9sptlriRty1HEF6kLBYLGvCVV7zcE&callback=initMap&libraries=geometry" async defer>
+        
+    </script>
     <script src="js/Model.js"></script>
     <script src=js/ComercioModal.js></script>
 </head>
@@ -69,21 +88,7 @@
 </body>
 
 <script>
-function initMap() {
-  // Create a map object and specify the DOM element for display.
-  var map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34.397, lng: 150.644},
-    scrollwheel: false,
-    zoom: 8
-  });
-    
-  google.maps.event.addListener(map, "click", function(evt) {
-      // When the map is clicked, pass the LatLng obect to the measureAdd function
-      document.getElementById("latLng").innerHTML = "Ubicacion: lat: " + evt.latLng.lat() + " lng: " + evt.latLng.lng();
-      tempLat = evt.latLng.lat();
-      tempLng = evt.latLng.lng();
-  });
-}
+
 
 
 function resizeMap() {
