@@ -17,7 +17,7 @@ var comercios = {};
 //ubicacion debe tener como atributos lat y lng
 function addComercio(nombre, codigo, descripcion, ubicacion) {
     
-    if (comercios[codigo] === undefined && nombre !== undefined && codigo !== undefined && ubicacion !== undefined && ubicacion.lat !== undefined && ubicacion.lng !== undefined) {
+    if (nombre !== undefined && codigo !== undefined && ubicacion !== undefined && ubicacion.lat !== undefined && ubicacion.lng !== undefined) {
         var comercio = {
         "nombre": nombre,
         "codigo": codigo,

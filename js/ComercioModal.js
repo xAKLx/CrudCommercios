@@ -27,6 +27,7 @@ function populateModal(codigo){
         document.getElementById("inputCodigo").value= comercio.codigo;
         document.getElementById("inputDescripcion").value= comercio.descripcion;
         tempLat = comercio.ubicacion.lat;
-        tempLat = comercio.ubicacion.lng;
+        tempLng = comercio.ubicacion.lng;
+        document.getElementById("latLng").innerHTML = "Ubicacion: lat: " + tempLat + " lng: " + tempLng;
     }
 }

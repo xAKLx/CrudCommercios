@@ -132,14 +132,14 @@ function setSelectedClick()
         }
 }
 
-function editComercioClickEvent(){
+function editComercioClickEvent(codigo){
     sleep(1000);
-    populateModal(selectedComercio);
+    populateModal(codigo);
     $('#myModal').modal('show');
 }
     
-function deleteComercioClickEvent(){
-    deleteComercio(selectedComercio);
+function deleteComercioClickEvent(codigo){
+    deleteComercio(codigo);
     updateCommerciosTable();
 }
 
@@ -180,7 +180,7 @@ function updateCommerciosTable(){
     var ubicacion = document.createElement("td");
     ubicacion.innerHTML = "lat: " + comercio["ubicacion"]["lat"] + ", lng: " + comercio["ubicacion"]["lng"];
     var acciones = document.createElement("td");
-    acciones.innerHTML = '<button type="button" class="btn btn-default" aria-label="Left Align" onclick="deleteComercioClickEvent()" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button><button type="button" class="btn btn-default" aria-label="Left Align" onclick="editComercioClickEvent()" ><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>'
+    acciones.innerHTML = '<button type="button" class="btn btn-default" aria-label="Left Align" onclick="deleteComercioClickEvent(\'' + comercio["codigo"] + '\')" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button><button type="button" class="btn btn-default" aria-label="Left Align" onclick="editComercioClickEvent(\'' + comercio["codigo"] + '\')" ><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>'
 
 
     var row = document.createElement("tr");
