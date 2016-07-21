@@ -7,6 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script>
+        var globalMap;
         function initMap() {
           // Create a map object and specify the DOM element for display.
           var map = new google.maps.Map(document.getElementById('map'), {
@@ -14,6 +15,14 @@
             scrollwheel: false,
             zoom: 8
           });
+            
+          var map2 = new google.maps.Map(document.getElementById('map2'), {
+              zoom: 5,
+              center: {lat: 24.886, lng: -70.268},
+              mapTypeId: google.maps.MapTypeId.TERRAIN
+            });
+            
+        globalMap = map2; 
 
           google.maps.event.addListener(map, "click", function(evt) {
               // When the map is clicked, pass the LatLng obect to the measureAdd function
@@ -32,14 +41,18 @@
     
 <body>
     <div class="container comerciosContainer">
+        <div id="areaContainer" class="row">
+            
+        </div>
       <div class="row">
         <div class="col-md-12">
           <table class="table table-bordered" id="comerciosTable">
-            <thead><tr><th>Nombre</th><th>Codigo</th><th>Descripcion</th><th>Ubicacion</th></tr></thead>
+            <thead><tr><th>Nombre</th><th>Codigo</th><th>Descripcion</th><th>Ubicacion</th><th>Acciones</th></tr></thead>
             <tbody id="comerciosTableBody"></tbody>
           </table>
         </div>
       </div>
+        
       <div class="row">
         <div class="col-md-12">
              <!-- Button trigger modal -->
@@ -48,6 +61,10 @@
           </button>
         </div>
       </div>
+        
+        <div class="row">
+            <div id="map2" class="" style="width: 100%; height: 300px"></div>
+        </div>
     </div>
     
  
@@ -80,7 +97,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveComercio()">Save changes</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveClickEvent()">Save changes</button>
       </div>
     </div>
   </div>
@@ -88,8 +105,48 @@
 </body>
 
 <script>
+    var area;
+    var polygon;
+    var aristas;
+    
+var selectedComercio = "";
 
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
 
+function setSelectedClick()
+{
+    var seconds = 3;
+    var g = document.getElementById('comerciosTableBody');
+    if(g != null && g.children != null)
+        for (var i = 0, len = g.children.length; i < len; i++) {
+            g.children[i].onclick = function () {
+                selectedComercio = this.children[1].textContent;
+            }
+        }
+}
+
+function editComercioClickEvent(){
+    sleep(1000);
+    populateModal(selectedComercio);
+    $('#myModal').modal('show');
+}
+    
+function deleteComercioClickEvent(){
+    deleteComercio(selectedComercio);
+    updateCommerciosTable();
+}
+
+function saveClickEvent(){
+    saveComercio();
+    updateCommerciosTable();
+}
 
 function resizeMap() {
    if(typeof map =="undefined") return;
@@ -112,8 +169,8 @@ function updateCommerciosTable(){
   var table = document.getElementById("comerciosTableBody");
     table.innerHTML = "";
 
-  for(codigo in comercios){
-    comercio = comercios[codigo];
+  for(codigo in getComercios()){
+    comercio = getComercios()[codigo];
     var nombre = document.createElement("td");
     nombre.innerHTML = comercio["nombre"];
     var codigo = document.createElement("td");
@@ -122,6 +179,9 @@ function updateCommerciosTable(){
     descripcion.innerHTML = comercio["descripcion"];
     var ubicacion = document.createElement("td");
     ubicacion.innerHTML = "lat: " + comercio["ubicacion"]["lat"] + ", lng: " + comercio["ubicacion"]["lng"];
+    var acciones = document.createElement("td");
+    acciones.innerHTML = '<button type="button" class="btn btn-default" aria-label="Left Align" onclick="deleteComercioClickEvent()" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button><button type="button" class="btn btn-default" aria-label="Left Align" onclick="editComercioClickEvent()" ><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>'
+
 
     var row = document.createElement("tr");
 
@@ -129,11 +189,64 @@ function updateCommerciosTable(){
     row.appendChild(codigo);
     row.appendChild(descripcion);
     row.appendChild(ubicacion);
+    row.appendChild(acciones);
 
     table.appendChild(row);
   }
-
+    initMap();
+    if(Object.keys(comercios).length >= 3){
+        
+        
+        var googleLatLngObject = [];
+        for(codigo in comercios){
+            googleLatLngObject.push(new google.maps.LatLng(comercios[codigo]["ubicacion"]["lat"], comercios[codigo]["ubicacion"]["lng"]));
+        }
+        
+        polygon = new google.maps.Polygon({
+            paths: googleLatLngObject
+        });
+                         
+        area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+        var areaContainer = document.getElementById("areaContainer");
+        areaContainer.innerHTML = "<h1>Area: " + area + "</h1>";
+        polygon.setMap(globalMap);
+    }
+    setSelectedClick();
 }
+    
+function makePolygons(){
+    aristas = [];
+    elegidas = {};
+    
+    for(codigo in comercios){
+        for(codigo2 in comercios){
+            if(codigo !== codigo2 && returnArista(codigo, codigo2) === undefined && returnArista(codigo2, codigo) === undefined){
+                var a = comercios[codigo]["ubicacion"]["lat"] - comercios[codigo2]["ubicacion"]["lat"];
+                var b = comercios[codigo]["ubicacion"]["lng"] - comercios[codigo2]["ubicacion"]["lng"];
+
+                var c = Math.sqrt( a*a + b*b );
+                aristas.push({"codigo": codigo, "codigo": codigo2, "distancia": c});
+            }
+        }
+    }
+    
+    for(item in aristas);
+}
+    
+function returnArista(codigo, codigo2){
+    for(item in aristas)
+        if(item["codigo"] === codigo && item["codigo2"] === codigo2)
+            return item;
+    return undefined;
+}
+    
+    
+addComercio("test1", "test1", "descripcion test 1", {"lat": 0, "lng": 0});
+addComercio("test2", "test2", "descripcion test 3", {"lat": 10, "lng": 0});
+addComercio("test4", "test4", "descripcion test 4", {"lat": 10, "lng": 10});
+addComercio("test3", "test3", "descripcion test 3", {"lat": 0, "lng": 10});
+
+updateCommerciosTable();
 
 </script>
 </html>

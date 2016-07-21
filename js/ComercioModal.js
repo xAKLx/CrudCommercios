@@ -11,7 +11,6 @@ function saveComercio(){
     ubicacion["lng"] = tempLng;
     
     addComercio(nombre, codigo, descripcion, ubicacion);
-    updateCommerciosTable();
     
     tempLat = undefined;
     tempLng = undefined;
@@ -19,4 +18,15 @@ function saveComercio(){
     document.getElementById("inputCodigo").value= "";
     document.getElementById("inputDescripcion").value= "";
     document.getElementById("latLng").innerHTML = "";
+}
+
+function populateModal(codigo){
+    comercio = getComercios()[codigo];
+    if(comercio !== undefined){
+        document.getElementById("inputNombre").value= comercio.nombre;
+        document.getElementById("inputCodigo").value= comercio.codigo;
+        document.getElementById("inputDescripcion").value= comercio.descripcion;
+        tempLat = comercio.ubicacion.lat;
+        tempLat = comercio.ubicacion.lng;
+    }
 }
