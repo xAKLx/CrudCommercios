@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QUnit basic example</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.0.0.css">
+    <script src="js/Model.js"></script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://code.jquery.com/qunit/qunit-2.0.0.js"></script>
+  <script>
+      function testAddComercio(){
+          var codigo = "test1Code";
+          addComercio("test1", codigo, "test1 Description", {"lat": 11, "lng": 12});
+          
+          var comercios = getComercios();
+          if(comercios !== undefined && comercios[codigo] !== undefined && comercios[codigo]["codigo"] === codigo && comercios[codigo]["nombre"] === "test1" && comercios[codigo]["descripcion"] === "test1 Description" && comercios[codigo]["ubicacion"] !== undefined && comercios[codigo]["ubicacion"]["lat"] === 11 && comercios[codigo]["ubicacion"]["lng"] === 12 )
+              return true;
+          
+          return false;
+      }
+      
+      function addManyComercios(count){
+          for(var i = 0; i < count; i++)
+              addComercio("test"+i, "testCode"+i, "testDescription"+i, {"lat": i, "lng": i});
+      }
+      
+    QUnit.test( "Probando Model", function( assert ) {
+      assert.ok( testAddComercio(), "Esta prueba debe ser true" );
+        assert.equal(Object.keys(getComercios()).length, 1, "Cantidad de comercios debe ser 1");
+        
+        currentLength = Object.keys(getComercios()).length;
+        toAdd = 30;
+        addManyComercios(toAdd);
+        assert.ok(toAdd <= Object.keys(getComercios()).length, "Cantidad de comercios debe ser 30 o mas, la cantidad de comercios es: "+ Object.keys(getComercios()).length);
+        
+        addComercio("test1", "testtest1", "test1 Description", {"lat": 11, "lng": 12});
+        assert.ok(getComercios()["testtest1"] !== undefined, "testtest1 fue agregado, por lo cual debe existir en el modelo. testtest1 es: ");
+        
+        deleteComercio("testtest1");
+        assert.ok(getComercios()["testtest1"] === undefined, "testtest1 fue eliminado, por lo cual no debe existir en el modelo");
+        
+        addComercio("noubicacion", "noubicacion", "test1 Description", {});
+        assert.ok(getComercios()["noubicacion"] === undefined, "noubicacion no provee todos los datos necesarios, por lo cual no debe existir en el modelo");
+        
+        addComercio();
+        assert.ok(getComercios()["noubicacion"] === undefined, "noubicacion no provee todos los datos necesarios, por lo cual no debe existir en el modelo");
+        
+        addComercio(13);
+        assert.ok(getComercios()["noubicacion"] === undefined, "noubicacion no provee todos los datos necesarios, por lo cual no debe existir en el modelo");
+        
+    });
+  </script>
+</body>
+</html>
