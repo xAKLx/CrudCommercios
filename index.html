@@ -105,35 +105,7 @@
 </body>
 
 <script>
-    var area;
-    var polygon;
-    var aristas;
-    
-var selectedComercio = "";
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
-
-function setSelectedClick()
-{
-    var seconds = 3;
-    var g = document.getElementById('comerciosTableBody');
-    if(g != null && g.children != null)
-        for (var i = 0, len = g.children.length; i < len; i++) {
-            g.children[i].onclick = function () {
-                selectedComercio = this.children[1].textContent;
-            }
-        }
-}
-
 function editComercioClickEvent(codigo){
-    sleep(1000);
     populateModal(codigo);
     $('#myModal').modal('show');
 }
@@ -147,7 +119,9 @@ function saveClickEvent(){
     saveComercio();
     updateCommerciosTable();
 }
-
+    
+    
+//To fix grey map
 function resizeMap() {
    if(typeof map =="undefined") return;
    setTimeout( resizingMap , 400);
@@ -164,6 +138,7 @@ $('#myModal').on('show.bs.modal', function() {
    //Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
    resizeMap();
 })
+//----
 
 function updateCommerciosTable(){
   var table = document.getElementById("comerciosTableBody");
@@ -202,50 +177,21 @@ function updateCommerciosTable(){
             googleLatLngObject.push(new google.maps.LatLng(comercios[codigo]["ubicacion"]["lat"], comercios[codigo]["ubicacion"]["lng"]));
         }
         
-        polygon = new google.maps.Polygon({
+        var polygon = new google.maps.Polygon({
             paths: googleLatLngObject
         });
                          
-        area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+        var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
         var areaContainer = document.getElementById("areaContainer");
         areaContainer.innerHTML = "<h1>Area: " + area + "</h1>";
         polygon.setMap(globalMap);
     }
-    setSelectedClick();
 }
     
-function makePolygons(){
-    aristas = [];
-    elegidas = {};
-    
-    for(codigo in comercios){
-        for(codigo2 in comercios){
-            if(codigo !== codigo2 && returnArista(codigo, codigo2) === undefined && returnArista(codigo2, codigo) === undefined){
-                var a = comercios[codigo]["ubicacion"]["lat"] - comercios[codigo2]["ubicacion"]["lat"];
-                var b = comercios[codigo]["ubicacion"]["lng"] - comercios[codigo2]["ubicacion"]["lng"];
-
-                var c = Math.sqrt( a*a + b*b );
-                aristas.push({"codigo": codigo, "codigo": codigo2, "distancia": c});
-            }
-        }
-    }
-    
-    for(item in aristas);
-}
-    
-function returnArista(codigo, codigo2){
-    for(item in aristas)
-        if(item["codigo"] === codigo && item["codigo2"] === codigo2)
-            return item;
-    return undefined;
-}
-    
-    
-addComercio("test1", "test1", "descripcion test 1", {"lat": 0, "lng": 0});
-addComercio("test2", "test2", "descripcion test 3", {"lat": 10, "lng": 0});
-addComercio("test4", "test4", "descripcion test 4", {"lat": 10, "lng": 10});
-addComercio("test3", "test3", "descripcion test 3", {"lat": 0, "lng": 10});
-
+addComercio("Acropolis Center",	"Acropolis00", "AcropolisCenter00	Plaza que parece un barco",	     {"lat": 18.468863264484387,     "lng": -69.93922233581543});	
+addComercio("Krispy Kreme",	    "Krispy00", "KrispyKreme00	Donas!",	  	                     {"lat": 18.470064058673596,    "lng": -69.94078874588013});	
+addComercio("Multicentro",      "Milticentro00", "La Sirena Churchill	Multicentro00	Es grande",	 {"lat": 18.472811606976105,     "lng": -69.94245171546936});	
+addComercio("Blue Mall",	    "BlueMall00", "BlueMall00	No es tan blue.",	                     {"lat": 18.47280143095249,     "lng": -69.9409818649292});
 updateCommerciosTable();
 
 </script>
